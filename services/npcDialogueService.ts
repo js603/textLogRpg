@@ -36,15 +36,27 @@ export async function generateNPCDialogue(
             ? `\n과거 대화:\n${recentMemories.map(m => `- ${m.message}`).join('\n')}`
             : '';
 
-        // 극도로 간소화된 프롬프트
+        // 개선된 프롬프트: NPC의 목적을 명확히 드러내도록
         const prompt = `당신은 "${npc.npcName}"입니다.
 
-성격: ${npc.personality.traits[0]}, ${npc.personality.speechPattern}
-플레이어: ${playerInput}${memoryContext}
+성격: ${npc.personality.traits.join(', ')}
+말투: ${npc.personality.speechPattern}
+동기/목적: ${npc.personality.motivations.join(', ')}
+두려움: ${npc.personality.fears.join(', ')}
+알고 있는 정보: ${npc.memory.knownFacts.join(', ')}
+현재 기분: ${npc.state.mood > 20 ? '좋음' : npc.state.mood < -20 ? '나쁨' : '보통'}
+신뢰도: ${npc.state.trust}/100${memoryContext}
 
-다음 형식으로만 답하세요:
+플레이어가 "${playerInput}"라고 말했습니다.
 
-대사: "2문장 응답"
+다음 규칙을 따라 응답하세요:
+1. 당신이 플레이어에게 원하는 것을 명확히 드러내세요
+2. 알고 있는 정보와 동기를 활용하여 구체적으로 설명하세요
+3. 2-3문장으로 응답하세요
+4. 성격과 말투를 반영하세요
+
+형식:
+대사: "응답 내용"
 선택지: 💬 계속 대화|✅ 도와주기|👋 나중에`;
 
         const result = await model.generateContent(prompt);

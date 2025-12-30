@@ -36,13 +36,17 @@ export async function generateOpeningScene(name: string, job: Job): Promise<Open
 3. 3-4문장으로 간결하게
 4. 마지막에 마을 촌장이 플레이어에게 다가와 인사하는 장면 포함
 
-촌장의 첫 대사도 함께 작성해주세요 (한 문장).
+촌장의 첫 대사 조건:
+- 촌장이 플레이어에게 말을 거는 이유를 명확히 포함
+- "동쪽 숲에서 몬스터가 증가하고 있어 마을이 위험하다"는 문제를 언급
+- 플레이어에게 도움을 요청하는 내용
+- 2-3문장으로 작성
 
 형식:
 ===내레이션===
 [오프닝 장면 묘사]
 ===촌장 대사===
-[촌장의 인사]`;
+[촌장의 인사와 도움 요청]`;
 
         const result = await model.generateContent(prompt);
         const text = result.response.text();
@@ -52,7 +56,9 @@ export async function generateOpeningScene(name: string, job: Job): Promise<Open
         const dialoguePart = text.match(/===촌장 대사===([\s\S]*)/);
 
         const narrative = narrativePart ? narrativePart[1].trim() : text;
-        const greeting = dialoguePart ? dialoguePart[1].trim().replace(/^["']|["']$/g, '') : "오, 새로운 얼굴이군요! 잠깐만 시간을 내주실 수 있겠습니까?";
+        const greeting = dialoguePart
+            ? dialoguePart[1].trim().replace(/^["']|["']$/g, '')
+            : "어서오시게, ${name}! 자네 같은 ${job}를 기다리고 있었네. 사실 동쪽 숲에서 몬스터들이 이상하게 많아지고 있어서 마을 주민들이 위험에 처해있다네. 자네가 우릴 도와줄 수 있겠나?";
 
         return {
             narrative,
@@ -64,7 +70,8 @@ export async function generateOpeningScene(name: string, job: Job): Promise<Open
                 npc: {
                     id: 'elder_001',
                     name: '마을 촌장',
-                    greeting
+                    greeting,
+                    intent: '동쪽 숲의 몬스터 문제 해결을 위한 도움 요청'
                 },
                 choices: [
                     { id: 'choice_1', text: '무슨 일이신가요?', action: 'talk_elder_what', icon: '💬' },
@@ -91,7 +98,8 @@ function getDefaultOpening(name: string, job: Job): OpeningScene {
             npc: {
                 id: 'elder_001',
                 name: '마을 촌장',
-                greeting: "오, 새로운 얼굴이군요! 잠깐만 시간을 내주실 수 있겠습니까?"
+                greeting: `어서오시게, ${name}! 자네 같은 ${job}를 기다리고 있었네. 사실 동쪽 숲에서 몬스터들이 이상하게 많아지고 있어서 마을 주민들이 위험에 처해있다네. 자네가 우릴 도와줄 수 있겠나?`,
+                intent: '동쪽 숲의 몬스터 문제 해결을 위한 도움 요청'
             },
             choices: [
                 { id: 'choice_1', text: '무슨 일이신가요?', action: 'talk_elder_what', icon: '💬' },

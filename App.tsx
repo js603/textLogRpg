@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Job, Choice, GameEvent, LogEntry, OpeningScene } from './types';
 import { generateOpeningScene, triggerProactiveEvent, provideContextualHint } from './services/proactiveEventService';
 import { classifyIntent, validateAction } from './services/arbiterService';
@@ -27,6 +27,9 @@ export default function App() {
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
   const [activeQuests, setActiveQuests] = useState<any[]>([]); // DynamicQuest[]
   const [currentHint, setCurrentHint] = useState<string>('💡 원하는 행동을 입력하거나 선택지를 클릭하세요');
+
+  // ========== 자동 스크롤 ==========
+  const logEndRef = useRef<HTMLDivElement>(null);
 
   // ========== 로그 추가 ==========
   const addLog = useCallback((message: string, type: LogEntry['type'] = 'info') => {
@@ -170,6 +173,11 @@ export default function App() {
     }
   };
 
+  // ========== 로그 자동 스크롤 ==========
+  useEffect(() => {
+    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs]);
+
   // ========== 무응답 감지 타이머 ==========
   useEffect(() => {
     if (!hasOpeningPlayed) return;
@@ -303,6 +311,9 @@ export default function App() {
             <p className="animate-pulse">...</p>
           </div>
         )}
+
+        {/* 자동 스크롤 타겟 */}
+        <div ref={logEndRef} />
       </div>
 
       {/* 선택지 버튼 영역 */}

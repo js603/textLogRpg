@@ -171,6 +171,7 @@ export interface GameEvent {
     id: string;
     name: string;
     greeting: string;
+    intent?: string; // NPC의 의도/목적 (예: "도움 요청", "퀘스트 제안", "정보 제공")
   };
   choices: Choice[];
   timestamp: number;
