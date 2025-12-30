@@ -37,8 +37,8 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          # GitHub Secrets에 API 키를 추가해야 합니다
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # GitHub Secrets에서 API 키를 가져옴 (VITE_ 접두사 필요)
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
