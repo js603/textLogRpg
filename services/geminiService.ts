@@ -2,8 +2,11 @@ import { GoogleGenAI } from "@google/genai";
 
 let aiClient: GoogleGenAI | null = null;
 
-if (process.env.API_KEY) {
-  aiClient = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Vite 환경 변수 사용
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+if (apiKey) {
+  aiClient = new GoogleGenAI({ apiKey });
 }
 
 export const generateFlavorText = async (context: string): Promise<string> => {
@@ -31,6 +34,6 @@ export const generateBossIntro = async (bossName: string, dungeonName: string): 
     });
     return response.text.trim();
   } catch (e) {
-      return `${bossName}가 무시무시한 기세로 나타났다!`;
+    return `${bossName}가 무시무시한 기세로 나타났다!`;
   }
 }
